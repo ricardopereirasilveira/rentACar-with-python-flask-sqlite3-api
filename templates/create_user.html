@@ -1,0 +1,22 @@
+{%extends "base.html"%}
+{%block title%} To continue, please, login{%endblock%}
+{%block conteudo%}
+
+
+
+<div class="login">
+  <h1>Create Account</h1>
+    <form method="POST" action="/creatinguser">
+        <input type="text" name="first-name" placeholder="First Name" required="required" />
+        <input type="text" name="last-name" placeholder="Last Name" />
+        <input type="text" name="username" placeholder="Username" />
+        <input type="password" name="password" placeholder="Password" />
+        <input type="password" name="confirm-password" placeholder="Confirm Password" />
+        <button type="submit" class="btn btn-primary btn-block btn-large">Create Account.</button><br>
+        <button type="reset" class="btn btn-danger btn-block btn-large">Reset</button>
+    </form>
+</div>
+
+
+
+{%endblock%}
