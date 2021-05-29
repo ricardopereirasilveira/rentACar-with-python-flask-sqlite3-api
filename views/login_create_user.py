@@ -1,17 +1,20 @@
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, session
 import bcrypt
 
-from helpers.database import databaseFunctions
+from models.user import databaseFunctions
 from app import app
 
 
 @app.route('/create-user')
 def create_user():
-    try:
-        databaseFunctions().createDatabase('user')
-    except Exception as e:
-        print(e)
-    return render_template('create_user.html')
+    if 'logged_user' not in session or session['logged_user'] == None:
+        try:
+            databaseFunctions().createDatabase('user')
+        except Exception as e:
+            print(e)
+        return render_template('create_user.html')
+    else:
+        return redirect(url_for('index'))
 
 
 # TODO: Criar o teste para verificar se funciona perfeitamente
@@ -38,12 +41,11 @@ def creating_user():
     flash('Your password and confirm passwords dont match! Please try again.')
     return redirect(url_for('create_user'))
 
-
-# TODO: Implementar o sistema de login para verificar se existe
 @app.route('/login')
 def login():
-    print()
-    return render_template('login.html')
+    if 'logged_user' not in session or session['logged_user'] == None:
+        return render_template('login.html')
+    return redirect(url_for('index'))
 
 
 @app.route('/authentication', methods=['POST', ])
@@ -56,7 +58,7 @@ def authentication():
         user = databaseFunctions().verifyUsernameAndPwd(username)
 
         if bcrypt.checkpw(password.encode(), user[4].encode()):
-            print('logged in')
+            session['logged_user'] = user[3]
             return redirect(url_for('index'))
 
         flash('Something went wrong, verify your account and password and try again')
@@ -64,3 +66,9 @@ def authentication():
 
     flash(f'Username {username} dont exist.')
     return redirect(url_for('login'))
+
+
+@app.route('/logout')
+def logout():
+    session['logged_user'] = None
+    return redirect('/login')

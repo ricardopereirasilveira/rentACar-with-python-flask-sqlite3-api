@@ -1,6 +1,7 @@
 from flask import Flask
+from flask_restful import Api, Resource
 
-from helpers.database import databaseFunctions
+from models.user import databaseFunctions, allUsersApiModel, usersApiModel
 
 
 app = Flask(__name__)
@@ -9,6 +10,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_pyfile('config.py')
 app.secret_key = 'testing'
 
+api = Api(app)
+
+api.add_resource(allUsersApiModel, '/api/user/all')
+api.add_resource(usersApiModel, '/api/user/<string:username>')
 
 
 

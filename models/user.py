@@ -1,4 +1,6 @@
 import sqlite3
+from flask_restful import Resource, reqparse
+
 
 class databaseFunctions:
     def __init__(self):
@@ -69,7 +71,12 @@ class databaseFunctions:
             print(e)
 
     # TODO: Caso não exista usuário, ajustar para ter o ID 1
-    def verifyLastAdded(self):
+    def verifyLastAdded(self) -> int:
+        """
+        That method verify the last ID from database to increment one more to not reply that
+        because the ID is unique
+        :return: It a integer with the last id from database + 1
+        """
         query = f"SELECT * FROM user ORDER BY id DESC LIMIT 1"
         self.__cursor.execute(query)
         user = int(self.__cursor.fetchone()[0])
@@ -77,7 +84,66 @@ class databaseFunctions:
         return user
 
     def verifyUsernameAndPwd(self, username: str) -> list:
+        """
+        That method is to verify if username exists in database
+        :param username: receive the username from front-end to verify the account
+        :return: it return a list with all parameters if user is find, to check the password.
+        """
         # SELECT * FROM user WHERE username = ''
         query = f"SELECT * FROM user WHERE username = '{username}'"
         self.__cursor.execute(query)
         return self.__cursor.fetchone()
+
+    def returningAllUsersFromDatabase(self):
+        query = "SELECT * FROM user"
+        self.__cursor.execute(query)
+        return self.__cursor.fetchall()
+
+
+class allUsersApiModel(Resource):
+    def get(self) -> []:
+        users = []
+        for x in databaseFunctions().returningAllUsersFromDatabase():
+            users.append(
+                {
+                    'id': x[0],
+                    'First Name': x[1],
+                    'Last Name': x[2],
+                    'Username': x[3]
+                }
+            )
+        return users, 200
+
+
+class usersApiModel(Resource):
+    args = reqparse.RequestParser()
+
+    def __init__(self, id_user=None, firstname=None, lastname=None, username=None):
+        self.__id_user = id_user
+        self.__firstname = firstname
+        self.__lastname = lastname
+        self.__username = username
+
+    def json(self):
+        return {
+            'id': self.__id_user,
+            'First Name': self.__firstname,
+            'Last Name': self.__lastname,
+            'Username': self.__username
+        }
+
+    def get(self, username: str) -> dict:
+        user = databaseFunctions().verifyUsernameAndPwd(username)
+        if user is None:
+            return {'message': 'user not found!'}
+        self.__id_user = user[0]
+        self.__firstname = user[1]
+        self.__lastname = user[2]
+        self.__username = user[3]
+        return self.json()
+
+    def put(self, username: str) -> dict:
+        pass
+
+    def delete(self, username: str) -> dict:
+        pass

@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{%extends "base.html"%}
+{%block title%} To continue, please, login{%endblock%}
+{%block conteudo%}
 
-</body>
-</html>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<div class="login">
+  <h1>Welcome</h1>
+
+</div>
+
+
+
+{%endblock%}
