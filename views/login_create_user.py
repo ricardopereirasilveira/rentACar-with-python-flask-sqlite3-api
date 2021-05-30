@@ -1,8 +1,12 @@
 from flask import render_template, redirect, url_for, request, flash, session
 import bcrypt
 
-from models.user import databaseFunctions
+from models.user import databaseFunctions, verifyIfUserIsLogged
 from app import app
+
+
+# TODO: Create a forget password
+# TODO: Create a delete account
 
 
 @app.route('/create-user')
@@ -18,8 +22,10 @@ def create_user():
 
 
 # TODO: Criar o teste para verificar se funciona perfeitamente
-@app.route('/creatinguser', methods=['POST', ])
+@app.route('/creatinguser', methods=['POST', 'GET'])
 def creating_user():
+    if request.method == 'GET':
+        return redirect(url_for('create_user'))
     first_name = request.form['first-name']
     last_name = request.form['last-name']
     username = request.form['username']
@@ -43,7 +49,7 @@ def creating_user():
 
 @app.route('/login')
 def login():
-    if 'logged_user' not in session or session['logged_user'] == None:
+    if verifyIfUserIsLogged():
         return render_template('login.html')
     return redirect(url_for('index'))
 
@@ -72,3 +78,13 @@ def authentication():
 def logout():
     session['logged_user'] = None
     return redirect('/login')
+
+
+# TODO: Quando o method for GET, envia as informações do usuário para o formulário
+# TODO: Quando o method for POST, atualiza as informações no banco de dados e
+#       atualiza o banco de dados com as informações do usuário
+@app.route('/edit/<int:user_id>', methods=['POST', 'GET'])
+def editUser(user_id):
+    if request.method == 'GET':
+        return render_template('edit_user.html')
+    return render_template('edit_user.html')

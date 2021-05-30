@@ -1,5 +1,14 @@
 import sqlite3
 from flask_restful import Resource, reqparse
+from flask import session
+
+
+def verifyIfUserIsLogged() -> True or False:
+    """
+    That param will check if user is logged ( using the session )
+    :return: It will return True or False. If user is logged, it will return TRUE, else FALSE
+    """
+    return 'logged_user' not in session or session['logged_user'] is None
 
 
 class databaseFunctions:
