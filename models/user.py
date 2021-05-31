@@ -87,10 +87,14 @@ class databaseFunctions:
         :return: It a integer with the last id from database + 1
         """
         query = f"SELECT * FROM user ORDER BY id DESC LIMIT 1"
-        self.__cursor.execute(query)
-        user = int(self.__cursor.fetchone()[0])
-        user += 1
-        return user
+        if len(self.returningAllUsersFromDatabase()) == 0:
+            print('entrei aqui')
+            return int(0)
+        else:
+            self.__cursor.execute(query)
+            user = int(self.__cursor.fetchone()[0])
+            user += 1
+            return user
 
     def verifyUsernameAndPwd(self, username: str) -> list:
         """
