@@ -88,7 +88,6 @@ class databaseFunctions:
         """
         query = f"SELECT * FROM user ORDER BY id DESC LIMIT 1"
         if len(self.returningAllUsersFromDatabase()) == 0:
-            print('entrei aqui')
             return int(0)
         else:
             self.__cursor.execute(query)
